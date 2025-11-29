@@ -1,60 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const quantity = document.getElementById("quantity");
-    const typeRadios = document.querySelectorAll("input[name='type']");
-    const optionsBlock = document.getElementById("options-block");
-    const optionsSelect = document.getElementById("options");
-    const propertyBlock = document.getElementById("property-block");
-    const property = document.getElementById("property");
+    const quantityInput = document.getElementById("quantity");
+    const serviceRadios = document.querySelectorAll('input[name="service"]');
+    const optionSelect = document.getElementById("optionSelect");
+    const propertyCheck = document.getElementById("propertyCheck");
+    const optionsBox = document.getElementById("optionsBox");
+    const propertyBox = document.getElementById("propertyBox");
     const result = document.getElementById("result");
 
-    function calculate() {
-        let qty = quantity.value.trim();
+    const basePrices = {
+        type1: 1000,
+        type2: 1500,
+        type3: 2000,
+    };
 
-        // Проверка количества
-        if (!/^[1-9][0-9]*$/.test(qty)) {
-            result.textContent = "Ошибка: введите корректное количество!";
-            result.style.color = "red";
-            return;
+    function updateVisibility() {
+        const selectedType = document.querySelector('input[name="service"]:checked').value;
+        if (selectedType === "type1") {
+            optionsBox.classList.add("hidden");
+            propertyBox.classList.add("hidden");
+        } else if (selectedType === "type2") {
+            optionsBox.classList.remove("hidden");
+            propertyBox.classList.add("hidden");
+        } else if (selectedType === "type3") {
+            optionsBox.classList.add("hidden");
+            propertyBox.classList.remove("hidden");
         }
-
-        qty = parseInt(qty, 10);
-        let type = [...typeRadios].find(r => r.checked).value;
-        let price = 0;
-
-        switch (type) {
-            case "1": // тип 1 — фиксированная цена
-                price = 500;
-                break;
-
-            case "2": // тип 2 — выпадающее меню
-                price = parseInt(optionsSelect.value);
-                break;
-
-            case "3": // тип 3 — чекбокс
-                price = 700;
-                if (property.checked) price += 300;
-                break;
-        }
-
-        let total = qty * price;
-        result.style.color = "black";
-        result.textContent = Стоимость: ${ total } ₽;
     }
 
-    // Переключение типов
-    typeRadios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            const val = radio.value;
+    function calculateTotal() {
+        const type = document.querySelector('input[name="service"]:checked').value;
+        const quantity = parseInt(quantityInput.value) || 0;
+        let total = basePrices[type] * quantity;
 
-            optionsBlock.classList.toggle("d-none", val !== "2");
-            propertyBlock.classList.toggle("d-none", val !== "3");
+        if (type === "type2") {
+            total += parseInt(optionSelect.value) * quantity;
+        }
+        if (type === "type3" && propertyCheck.checked) {
+            total += parseInt(propertyCheck.value) * quantity;
+        }
 
-            calculate();
-        });
-    });
+        result.textContent = `Стоимость: ${total.toLocaleString()}₽`;
+    }
 
-    // Ввод данных
-    quantity.addEventListener("input", calculate);
-    optionsSelect.addEventListener("change", calculate);
-    property.addEventListener("change", calculate);
+    serviceRadios.forEach(radio => radio.addEventListener("change", () => {
+        updateVisibility();
+        calculateTotal();
+    }));
+
+    [quantityInput, optionSelect, propertyCheck].forEach(el =>
+        el.addEventListener("input", calculateTotal)
+    );
+
+    updateVisibility();
+    calculateTotal();
 });
