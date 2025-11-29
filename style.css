@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+
+header h1 {
+    color: rgb(250, 138, 157);
+}
+
+
+.list-group-item a {
+    color: #e75085;
+    text-decoration: none;
+}
+
+.list-group-item a:hover {
+    text-decoration: underline;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+
+@media (max-width: 768px) {
+    header h1 {
+        text-align: center;
+    }
+
+    footer {
+        font-size: 14px;
+    }
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
